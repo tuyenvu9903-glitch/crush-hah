@@ -1,120 +1,46 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
   <head>
     <meta charset="utf-8" />
-    <title>Em có muốn đii chơi với em hongg</title>
-    <link
-      rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
-    />
-    <style>
-      @import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&display=swap");
-
-      body {
-        font-family: "Be Vietnam Pro", "Segoe UI", Tahoma, sans-serif;
-        margin: 0;
-        overflow: hidden;
-      }
-
-      .center-screen {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-      }
-      img {
-        width: 350px;
-      }
-      .buttones {
-        width: 100%;
-        text-align: center;
-      }
-      .btn {
-        display: inline-block;
-      }
-      h2 {
-        color: white;
-        font-size: 18px;
-
-        padding-top: 2px;
-        padding-left: 5px;
-        padding-right: 5px;
-      }
-      .mainn a {
-        text-decoration: none;
-        position: absolute;
-        right: 2%;
-        color: red;
-        bottom: 2%;
-      }
-      #nooo {
-        background: transparent;
-        color: red;
-        border: none;
-      }
-      .nooo {
-        color: red;
-        font-weight: 700;
-        font-size: 25px;
-      }
-      #nobut {
-        background: red;
-      }
-      #yesbut {
-        background: green;
-        padding: 10px;
-        padding-left: 18px;
-        padding-right: 18px;
-      }
-      h1 {
-        text-shadow: 0 0 10px rgba(255, 254, 255, 0.68);
-        font-weight: 800;
-        letter-spacing: 0.2px;
-      }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Đi lễ cùng anh nhé</title>
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div
-      id="app"
-      class="center-screen"
-      style="display: flex; flex-direction: column"
-    >
-    <p style="text-align: center; margin-top: 100px;">Nếu thoát ra hoặc không chọn thì làm người yêu anh nhé</p>
-     <h1 style="text-align: center; margin-bottom: 20px;">Em có muốn đi lễ với anh từ giờ tới cuối đời không?</h1>
-      <img
-        src="https://raw.githubusercontent.com/DzarelDeveloper/Img/main/Let's%20go.gif"
-        alt=""
-      />
-      <button
-        type="button"
-        class="btn btn-danger"
-        @click="changeText('noButton')"
-        id="nooo"
-      >
-        <h2 class="nooo" @click="changeText('heading') ">
-          {{ currentHeaderText }}
-        </h2>
-      </button>
-      <div class="buttones">
-        <button
-          type="button"
-          class="btn btn-success mr-2"
-          :style="{ fontSize: yesButtonSize + 'rem' }"
-          :key="yesButtonSize"
-          @click="yesButton"
-          id="yesbut"
-        >
-          Yes
-        </button>
-
-        <button
-          type="button"
-          class="btn btn-danger"
-          @click="changeText('noButton')"
-          id="nobut"
-        >
-          <h2>No</h2>
-        </button>
+    <div id="app" class="page-shell">
+      <div class="love-card">
+        <p class="script-accent">Dành cho em</p>
+        <p class="lead-note">
+          Nếu thoát ra hoặc không chọn thì… coi như em đồng ý làm người yêu
+          anh nhé.
+        </p>
+        <h1 class="title-main">
+          Em có muốn <span class="hl">đi lễ</span> với anh từ giờ tới cuối đời
+          không?
+        </h1>
+        <img
+          class="hero-img"
+          src="https://raw.githubusercontent.com/DzarelDeveloper/Img/main/Let's%20go.gif"
+          alt=""
+        />
+        <p class="persuade" v-show="currentHeaderText">{{ currentHeaderText }}</p>
+        <p class="confirm-line" v-show="noPressCount > 0">
+          {{ currentConfirmationText }}
+        </p>
+        <div class="btn-row">
+          <button
+            type="button"
+            class="btn btn-yes"
+            :style="{ fontSize: yesButtonSize + 'rem' }"
+            :key="yesButtonSize"
+            @click="yesButton"
+          >
+            Có
+          </button>
+          <button type="button" class="btn btn-no" @click="changeText('noButton')">
+            Không
+          </button>
+        </div>
       </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
@@ -143,7 +69,7 @@
             "Em chắc chắn tuyệt đối luôn hả?",
           ],
           currentHeaderTextIndex: 0,
-          currentConfirmationIndex: 0,
+          noPressCount: 0,
           yesButtonSize: 1,
         },
         methods: {
@@ -151,10 +77,8 @@
             if (button === "noButton") {
               this.currentHeaderTextIndex =
                 (this.currentHeaderTextIndex + 1) % this.headerText.length;
-              this.currentConfirmationIndex =
-                (this.currentConfirmationIndex + 1) %
-                this.confirmationMessages.length;
-              this.yesButtonSize += 5;
+              this.noPressCount += 1;
+              this.yesButtonSize = Math.min(this.yesButtonSize + 0.35, 3.2);
             }
           },
           yesButton() {
@@ -166,7 +90,11 @@
             return this.headerText[this.currentHeaderTextIndex];
           },
           currentConfirmationText() {
-            return this.confirmationMessages[this.currentConfirmationIndex];
+            const i = Math.min(
+              this.noPressCount - 1,
+              this.confirmationMessages.length - 1
+            );
+            return this.confirmationMessages[Math.max(0, i)];
           },
         },
       });
