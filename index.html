@@ -23,21 +23,31 @@
           src="https://raw.githubusercontent.com/DzarelDeveloper/Img/main/Let's%20go.gif"
           alt=""
         />
-        <p class="persuade" v-show="currentHeaderText">{{ currentHeaderText }}</p>
-        <p class="confirm-line" v-show="noPressCount > 0">
-          {{ currentConfirmationText }}
-        </p>
+        <div
+          v-if="currentHeaderText || noPressCount > 0"
+          class="message-block"
+        >
+          <p class="persuade" v-show="currentHeaderText">{{ currentHeaderText }}</p>
+          <p class="confirm-line" v-show="noPressCount > 0">
+            {{ currentConfirmationText }}
+          </p>
+        </div>
         <div class="btn-row">
           <button
             type="button"
             class="btn btn-yes"
-            :style="{ fontSize: yesButtonSize + 'rem' }"
+            :style="yesButtonStyle"
             :key="yesButtonSize"
             @click="yesButton"
           >
             Có
           </button>
-          <button type="button" class="btn btn-no" @click="changeText('noButton')">
+          <button
+            v-if="showNoButton"
+            type="button"
+            class="btn btn-no"
+            @click="changeText('noButton')"
+          >
             Không
           </button>
         </div>
@@ -74,27 +84,36 @@
         },
         methods: {
           changeText(button) {
-            if (button === "noButton") {
-              this.currentHeaderTextIndex =
-                (this.currentHeaderTextIndex + 1) % this.headerText.length;
-              this.noPressCount += 1;
-              this.yesButtonSize = Math.min(this.yesButtonSize + 0.35, 3.2);
-            }
+            if (button !== "noButton") return;
+            if (this.currentHeaderTextIndex >= this.headerText.length - 1) return;
+            this.currentHeaderTextIndex += 1;
+            this.noPressCount += 1;
+            this.yesButtonSize = Math.min(this.yesButtonSize + 0.75, 5.5);
           },
           yesButton() {
             window.location.href = "date.html";
           },
         },
         computed: {
+          showNoButton() {
+            return this.currentHeaderTextIndex < this.headerText.length - 1;
+          },
+          yesButtonStyle() {
+            const s = this.yesButtonSize;
+            return {
+              fontSize: s + "rem",
+              lineHeight: 1.1,
+              padding:
+                0.4 + s * 0.12 + "rem " + (0.85 + s * 0.35) + "rem",
+            };
+          },
           currentHeaderText() {
             return this.headerText[this.currentHeaderTextIndex];
           },
           currentConfirmationText() {
             const i = Math.min(
               this.noPressCount - 1,
-              this.confirmationMessages.length - 1
             );
-            return this.confirmationMessages[Math.max(0, i)];
           },
         },
       });
